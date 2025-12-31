@@ -219,9 +219,15 @@ const CourseDetailPage: React.FC = () => {
   }, [navigate]);
 
   const handleReserveSlot = useCallback(() => {
-    // Add reservation logic here
     console.log("Reserve slot clicked for course:", course?.name);
-  }, [course]);
+
+    navigate("/callback", {
+      state: {
+        courseName: course?.name,
+        courseId: course?._id,
+      },
+    });
+  }, [course, navigate]);
 
   // Memoized calculations
   const discountPercent = useMemo(() => {
