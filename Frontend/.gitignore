@@ -15,7 +15,11 @@ dist-ssr
 #Environment files
 .env
 .env.*.local
+<<<<<<< HEAD
 .env.d.ts
+=======
+env.d.ts
+>>>>>>> b69df8bd2e1cf8444a8abcbb7f9acf4d05a083d4
 
 # Build output
 build
