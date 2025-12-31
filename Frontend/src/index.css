@@ -1,0 +1,271 @@
+@import "tailwindcss";
+
+/* Custom Layer Styles */
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Blueprint Grid Pattern */
+  .blueprint-grid {
+    background-image: linear-gradient(
+        to right,
+        currentColor 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, currentColor 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Dot Pattern */
+  .bg-dots {
+    background-image: radial-gradient(#e4e4e7 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .dark .bg-dots {
+    background-image: radial-gradient(#27272a 1px, transparent 1px);
+  }
+
+  /* Liquid Glass Effect */
+  .liquid-glass {
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+  }
+
+  /* Text Outline Effect */
+  .text-outline {
+    -webkit-text-stroke: 1px currentColor;
+    color: transparent;
+  }
+
+  /* Paper Texture */
+  .paper-texture {
+    background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+  }
+
+  /* Reveal Animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Marquee Container */
+  .marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    animation: marquee 50s linear infinite;
+  }
+
+  /* Massive Text */
+  .massive-text {
+    font-size: clamp(3.5rem, 16vw, 13rem);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+  }
+
+  /* Animation Classes */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .animate-spin-slow {
+    animation: spin 20s linear infinite;
+    will-change: transform;
+  }
+
+  .animate-reverse-spin {
+    animation: spin 15s linear infinite reverse;
+    will-change: transform;
+  }
+}
+
+@layer utilities {
+  /* Hardware Acceleration */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Smooth Transitions */
+  .transition-all,
+  .transition-colors,
+  .transition-transform,
+  .transition-opacity {
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Prevent Layout Shift on Hover */
+  button,
+  a {
+    transform-origin: center center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Scale Transform Without Layout Shift */
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+    transform-origin: center center;
+  }
+
+  /* Container Stability */
+  .grid {
+    isolation: isolate;
+  }
+
+  .group:hover {
+    contain: layout style paint;
+  }
+}
+
+/* Keyframe Animations */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-300 dark:bg-zinc-700;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+/* Custom Cursor Styles */
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-cyan, #06b6d4);
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+.cursor-outline {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(6, 182, 212, 0.5);
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease,
+    transform 0.1s ease;
+  will-change: transform;
+}
+
+/* Performance Optimizations */
+[class*="shadow"] {
+  transition: box-shadow 0.3s ease-out;
+}
+
+[style*="gradient"] {
+  transform: translateZ(0);
+}
+
+/* Hide cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .cursor-dot,
+  .cursor-outline {
+    display: none;
+  }
+
+  body {
+    cursor: auto !important;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-float,
+  .animate-spin-slow,
+  .animate-reverse-spin {
+    animation: none;
+  }
+
+  button:hover,
+  a:hover {
+    transform: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
