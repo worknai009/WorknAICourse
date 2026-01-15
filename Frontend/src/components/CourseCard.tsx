@@ -2,22 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context";
-
-// Interface matching the backend Course schema
-interface Course {
-  _id: string;
-  id: string;
-  name: string;
-  description: string;
-  status: "Online" | "Offline" | "Hybrid";
-  language: string;
-  originalPrice: number;
-  discountedPrice: number;
-  certificateImage?: string;
-  isActive: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import type { Course } from "../../services/api";
+import { getCourseStatuses } from "../../services/api";
 
 interface Props {
   course: Course;
@@ -26,6 +12,9 @@ interface Props {
 const CourseCard: React.FC<Props> = ({ course }) => {
   const { isDarkMode } = useTheme();
   const [imageError, setImageError] = useState(false);
+
+  // Get all statuses as an array (handles both string and array formats)
+  const statuses = getCourseStatuses(course);
 
   // Calculate discount percentage
   const discountPercent =
@@ -106,25 +95,32 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           )}
         </div>
 
-        {/* Bottom Info - Status and Language */}
+        {/* Bottom Info - Status(es) and Language */}
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-          <span
-            className={`px-3 py-1.5 text-white text-[10px] font-black rounded-full uppercase tracking-widest ${
-              course.status === "Online"
-                ? isDarkMode
-                  ? "bg-cyan-700"
-                  : "bg-blue-600"
-                : course.status === "Offline"
-                ? isDarkMode
-                  ? "bg-fuchsia-700"
-                  : "bg-rose-600"
-                : isDarkMode
-                ? "bg-purple-700"
-                : "bg-purple-600"
-            }`}
-          >
-            {course.status} Mode
-          </span>
+          {/* Status Badges - Show all available modes */}
+          <div className="flex flex-wrap gap-2">
+            {statuses.map((status) => (
+              <span
+                key={status}
+                className={`px-3 py-1.5 text-white text-[10px] font-black rounded-full uppercase tracking-widest ${
+                  status === "Online"
+                    ? isDarkMode
+                      ? "bg-cyan-700"
+                      : "bg-blue-600"
+                    : status === "Offline"
+                    ? isDarkMode
+                      ? "bg-fuchsia-700"
+                      : "bg-rose-600"
+                    : isDarkMode
+                    ? "bg-purple-700"
+                    : "bg-purple-600"
+                }`}
+              >
+                {status}
+              </span>
+            ))}
+          </div>
+
           <span className="px-3 py-1.5 bg-black/50 backdrop-blur-md text-white text-[10px] font-black rounded-full uppercase tracking-widest">
             {course.language}
           </span>

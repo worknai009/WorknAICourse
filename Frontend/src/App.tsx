@@ -10,6 +10,7 @@ import Courses from './pages/Courses';
 import Auth from './pages/Auth';
 import RequestCallback from './pages/RequestCallback';
 import Footer from './components/Footer';
+import Products from './pages/Products';
 
 // AppContent component - handles routing and layout
 const AppContent: React.FC = () => {
@@ -35,6 +36,7 @@ const AppContent: React.FC = () => {
           <Route path="/signin" element={<Auth type="signin" />} />
           <Route path="/signup" element={<Auth type="signup" />} />
           <Route path="/callback" element={<RequestCallback />} />
+          <Route path="/products" element={<Products />} />
         </Routes>
       </main>
       {!isAuthPage && <Footer />}

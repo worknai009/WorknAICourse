@@ -669,86 +669,125 @@ const CourseDetailPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Phase Content */}
+          {/* Phase Content - Vertical Scrolling Timeline */}
           <div className="relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activePhase}
-                initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 1.02, filter: "blur(10px)" }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className={`w-full p-10 md:p-16 rounded-[4rem] border-4 overflow-hidden relative shadow-2xl transition-colors duration-500 ${
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.5 }}
+                className={`w-full p-8 md:p-16 rounded-[3rem] border-t-4 transition-colors duration-500 ${
                   isDarkMode
-                    ? "bg-zinc-900 border-zinc-800"
-                    : "bg-white border-zinc-100 shadow-zinc-300/20"
+                    ? "bg-zinc-900/20 border-cyan-500/50"
+                    : "bg-zinc-50 border-blue-600/50"
                 }`}
               >
-                <div
-                  className="absolute top-10 left-10 flex gap-2"
-                  aria-hidden="true"
-                >
-                  <div className="w-3 h-3 rounded-full bg-rose-500/20" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/20" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/20" />
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start relative z-10">
-                  <div className="lg:col-span-4 space-y-10">
-                    <div className="space-y-4">
-                      <span
-                        className={`text-[10px] font-black uppercase tracking-[0.5em] transition-colors duration-500 ${
-                          isDarkMode ? "text-cyan-400" : "text-blue-600"
-                        }`}
-                      >
-                        Monthly Objective
-                      </span>
-                      <h3 className="text-4xl md:text-5xl font-syne font-light tracking-tighter leading-tight">
-                        {syllabusPhases[activePhase].title}
-                      </h3>
-                    </div>
-                    <p className="text-xl text-zinc-500 font-medium leading-relaxed border-l-4 border-zinc-500/10 pl-8 max-w-sm">
-                      "{syllabusPhases[activePhase].desc}"
+                <div className="max-w-5xl mx-auto">
+                  {/* Phase Header */}
+                  <div className="mb-16 space-y-4">
+                    <h3 className="text-4xl md:text-6xl font-syne font-light tracking-tighter">
+                      {syllabusPhases[activePhase].title}
+                    </h3>
+                    <p className="text-xl text-zinc-500 max-w-2xl leading-relaxed">
+                      {syllabusPhases[activePhase].desc}
                     </p>
                   </div>
 
-                  <div className="lg:col-span-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Vertical Timeline Wrapper */}
+                  <div className="relative">
+                    {/* The Main Vertical Line */}
+                    <div
+                      className={`absolute left-4 md:left-8 top-0 bottom-0 w-px ${
+                        isDarkMode
+                          ? "bg-linear-to-b from-cyan-500/50 via-zinc-800 to-transparent"
+                          : "bg-linear-to-b from-blue-600/50 via-zinc-200 to-transparent"
+                      }`}
+                    />
+
+                    <div className="space-y-12">
                       {syllabusPhases[activePhase].weeks.map((week, j) => (
                         <motion.div
                           key={`week-${j}`}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: j * 0.1, duration: 0.4 }}
-                          className={`p-6 rounded-3xl border border-zinc-500/10 hover:border-cyan-500/20 transition-all duration-300 group ${
-                            isDarkMode ? "bg-zinc-950/30" : "bg-zinc-50/50"
-                          }`}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: j * 0.1 }}
+                          className="relative pl-12 md:pl-24 group"
                         >
-                          <div className="flex items-center gap-4 border-b border-dashed border-zinc-500/10 pb-4 mb-4">
+                          {/* Timeline Node (Dot) */}
+                          <div className="absolute left-0 md:left-4 top-2 -translate-x-1/2 flex items-center justify-center">
                             <div
-                              className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black font-syne shrink-0 transition-all duration-300 ${
+                              className={`w-8 h-8 md:w-10 md:h-10 rounded-full border-4 flex items-center justify-center z-10 transition-all duration-500 ${
                                 isDarkMode
-                                  ? "bg-cyan-500 text-black"
-                                  : "bg-black text-white"
+                                  ? "bg-zinc-950 border-zinc-800 group-hover:border-cyan-500"
+                                  : "bg-white border-zinc-200 group-hover:border-blue-600"
                               }`}
                             >
-                              {week.label.slice(-1)}
+                              <div
+                                className={`w-2 h-2 rounded-full ${
+                                  isDarkMode ? "bg-cyan-500" : "bg-blue-600"
+                                }`}
+                              />
                             </div>
-                            <h5 className="text-base font-bold tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
-                              {week.title}
-                            </h5>
+
+                            {/* Glowing effect on hover */}
+                            <div
+                              className={`absolute inset-0 rounded-full blur-md opacity-0 group-hover:opacity-40 transition-opacity duration-500 ${
+                                isDarkMode ? "bg-cyan-500" : "bg-blue-600"
+                              }`}
+                            />
                           </div>
-                          <ul className="space-y-3">
-                            {week.topics.map((topic, k) => (
-                              <li
-                                key={`topic-${k}`}
-                                className="flex items-start gap-3 text-[10px] text-zinc-500 font-bold uppercase tracking-wider"
+
+                          {/* Content */}
+                          <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-12">
+                            <div className="min-w-[100px]">
+                              <span
+                                className={`font-syne font-black text-sm uppercase tracking-[0.2em] ${
+                                  isDarkMode ? "text-cyan-400" : "text-blue-600"
+                                }`}
                               >
-                                <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/40 mt-1.5 shrink-0" />
-                                <span className="flex-1">{topic.name}</span>
-                              </li>
-                            ))}
-                          </ul>
+                                {week.label}
+                              </span>
+                              <div
+                                className={`h-px w-8 mt-2 ${
+                                  isDarkMode ? "bg-zinc-800" : "bg-zinc-200"
+                                }`}
+                              />
+                            </div>
+
+                            <div className="flex-1 space-y-6">
+                              <h5 className="text-2xl md:text-3xl font-bold font-inter tracking-tight uppercase">
+                                {week.title}
+                              </h5>
+
+                              {/* Topics List - Displayed as technical logs */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                                {week.topics.map((topic, k) => (
+                                  <div
+                                    key={`topic-${k}`}
+                                    className={`flex items-center gap-3 p-3 rounded-xl border border-transparent transition-all duration-300 ${
+                                      isDarkMode
+                                        ? "hover:bg-zinc-800/50 hover:border-white/5"
+                                        : "hover:bg-white hover:shadow-sm hover:border-zinc-100"
+                                    }`}
+                                  >
+                                    <div
+                                      className={`w-1 h-1 rounded-full ${
+                                        isDarkMode
+                                          ? "bg-zinc-600"
+                                          : "bg-zinc-400"
+                                      }`}
+                                    />
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-zinc-500">
+                                      {topic.name}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
                         </motion.div>
                       ))}
                     </div>
