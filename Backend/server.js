@@ -3,9 +3,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dns = require("dns");
 
-// Fix for MongoDB SRV resolution issues in some environments
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
-
 const cors = require("cors");
 const dotenv = require("dotenv");
 const courseRoutes = require("./routes/course.routes");
@@ -47,11 +44,39 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
-// Middleware
+// =====================
+// CORS (FIXED & SAFE)
+// =====================
+const allowedOrigins = [
+  "https://worknai.online",
+  "https://www.worknai.online",
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*",
+    origin: function (origin, callback) {
+      // Allow all origins in development or if specified
+      if (
+        !process.env.NODE_ENV ||
+        process.env.NODE_ENV === "development" ||
+        !origin
+      ) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+        return callback(null, true);
+      }
+
+      console.log("Rejected Origin:", origin);
+      return callback(new Error("CORS not allowed"));
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(express.json({ limit: "10kb" }));
