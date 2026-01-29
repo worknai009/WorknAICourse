@@ -1,24 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Optional: Link to a favicon, Vite automatically handles URL rebasing -->
+    <link rel="icon" type="image/svg+xml" href="/Logo2.jpeg" />
+    <title>WorknAi Technologies</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Optional: Link to a favicon, Vite automatically handles URL rebasing -->
-  <link rel="icon" type="image/svg+xml" href="/Logo2.jpeg" />
-  <title>WorknAi Technologies</title>
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Preconnect for Performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
-    rel="stylesheet" />
-
-  <!-- Import Map for ES Modules -->
-  <script type="importmap">
+    <!-- Import Map for ES Modules -->
+    <script type="importmap">
       {
         "imports": {
           "react": "https://esm.sh/react@^19.2.3",
@@ -32,48 +32,125 @@
       }
     </script>
 
-  <!-- Custom Styles -->
-  <style>
-    /* CSS Variables */
-    :root {
-      --bg-white: #ffffff;
-      --bg-black: #000000;
-      --text-dark: #09090b;
-      --text-light: #ffffff;
-      --accent-cyan: #06b6d4;
-      --accent-fuchsia: #d946ef;
-    }
+    <!-- Custom Styles -->
+    <style>
+      /* CSS Variables */
+      :root {
+        --bg-white: #ffffff;
+        --bg-black: #000000;
+        --text-dark: #09090b;
+        --text-light: #ffffff;
+        --accent-cyan: #06b6d4;
+        --accent-fuchsia: #d946ef;
+      }
 
-    /* Base Styles */
-    body {
-      background-color: #000000;
-      color: #ffffff;
-      font-family: "Inter", sans-serif;
-      scroll-behavior: smooth;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
-    }
+      /* Base Styles */
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        font-family: "Inter", sans-serif;
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
 
-    /* Selection Style */
-    ::selection {
-      background: var(--accent-cyan);
-      color: var(--bg-black);
-    }
+      /* Selection Style */
+      ::selection {
+        background: var(--accent-cyan);
+        color: var(--bg-black);
+      }
 
-    /* Performance Optimization */
-    * {
-      -webkit-tap-highlight-color: transparent;
-    }
-  </style>
-</head>
+      /* Performance Optimization */
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+  </head>
 
-<body class="bg-black text-white selection:bg-accent-cyan selection:text-black paper-texture">
-  <!-- React Root -->
-  <div id="root"></div>
+  <script>
+    (function () {
+      if (window._worknai_loaded_) return;
+      window._worknai_loaded_ = true;
 
-  <!-- Main Application Script -->
-  <script type="module" src="/src/main.tsx"></script>
-</body>
+      let isOpen = false;
 
+      // === Chat iframe ===
+      const iframe = document.createElement("iframe");
+      iframe.src = "https://worknai-chatbot-frontend.vercel.app/";
+      iframe.style.position = "fixed";
+      iframe.style.bottom = "90px";
+      iframe.style.right = "20px";
+      iframe.style.width = "360px";
+      iframe.style.height = "520px";
+      iframe.style.border = "none";
+      iframe.style.borderRadius = "16px";
+      iframe.style.zIndex = "999999";
+      iframe.style.boxShadow = "0 10px 40px rgba(0,0,0,0.25)";
+      iframe.style.display = "none";
+
+      // === Toggle button ===
+      const button = document.createElement("button");
+      button.innerHTML = "💬";
+      button.style.position = "fixed";
+      button.style.bottom = "20px";
+      button.style.right = "20px";
+      button.style.width = "56px";
+      button.style.height = "56px";
+      button.style.borderRadius = "50%";
+      button.style.border = "none";
+      button.style.cursor = "pointer";
+      button.style.fontSize = "24px";
+      button.style.background =
+        "linear-gradient(135deg, #22d3ee, #3b82f6, #a855f7)";
+      button.style.color = "#fff";
+      button.style.zIndex = "1000000";
+      button.style.boxShadow = "0 8px 30px rgba(0,0,0,0.3)";
+
+      // === Greeting bubble ===
+      const greeting = document.createElement("div");
+      greeting.innerText = "Hi 👋 Need help?";
+      greeting.style.position = "fixed";
+      greeting.style.bottom = "86px";
+      greeting.style.right = "20px";
+      greeting.style.background = "#111827";
+      greeting.style.color = "#ffffff";
+      greeting.style.padding = "8px 12px";
+      greeting.style.borderRadius = "12px";
+      greeting.style.fontSize = "14px";
+      greeting.style.boxShadow = "0 6px 20px rgba(0,0,0,0.3)";
+      greeting.style.zIndex = "1000000";
+      greeting.style.transition = "opacity 0.3s ease";
+
+      // Auto-hide greeting after 6 seconds
+      setTimeout(() => {
+        greeting.style.opacity = "0";
+        setTimeout(() => greeting.remove(), 300);
+      }, 6000);
+
+      // Toggle logic
+      button.onclick = function () {
+        isOpen = !isOpen;
+        iframe.style.display = isOpen ? "block" : "none";
+        button.innerHTML = isOpen ? "✖" : "💬";
+
+        // Remove greeting once user interacts
+        if (greeting.parentNode) greeting.remove();
+      };
+
+      document.body.appendChild(iframe);
+      document.body.appendChild(button);
+      document.body.appendChild(greeting);
+    })();
+  </script>
+
+  <body
+    class="bg-black text-white selection:bg-accent-cyan selection:text-black paper-texture"
+  >
+    <!-- React Root -->
+    <div id="root"></div>
+
+    <!-- Main Application Script -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
