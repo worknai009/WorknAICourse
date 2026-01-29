@@ -144,7 +144,7 @@ const Home: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10 relative">
           <div className="lg:col-span-8">
-            <h1 className="text-[11vw] lg:text-[8vw] font-black font-syne leading-[0.8] tracking-tighter uppercase mb-8">
+            <h1 className="text-[9vw] lg:text-[6.5vw] font-black font-syne leading-[1.1] tracking-tighter uppercase mb-8">
               <span
                 className={`block edu-header transition-colors duration-500 ${
                   isDarkMode ? "text-white" : "text-black"
@@ -153,7 +153,7 @@ const Home: React.FC = () => {
                 Master
               </span>
               <span
-                className="block edu-header transition-all duration-500"
+                className="block edu-header transition-all duration-500 -mt-15"
                 style={{
                   backgroundImage:
                     "linear-gradient(90deg, #00E5FF 0%, #2D9CFF 30%, #7B61FF 55%, #C44CFF 75%, #FF2CDF 100%)",
@@ -359,7 +359,7 @@ const Home: React.FC = () => {
             <div className="lg:col-span-5 sticky top-32 reveal">
               {/* Main Heading */}
               <h2
-                className={`text-5xl md:text-7xl font-black font-syne tracking-tighter uppercase leading-[0.85] mb-8 transition-colors duration-500 ${
+                className={`text-4xl md:text-6xl font-black font-syne tracking-tighter uppercase leading-[1.0] mb-8 transition-colors duration-500 ${
                   isDarkMode ? "text-white" : "text-black"
                 }`}
               >
