@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../context";
 import { motion } from "framer-motion";
+import { useAuth } from "../AuthContext";
 
 const Navbar: React.FC = () => {
   const { isDarkMode } = useTheme();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -18,9 +20,9 @@ const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
+    { name: "Products", path: "/products" },
     { name: "Courses", path: "/courses" },
     { name: "Contact", path: "/callback" },
-    { name: "Products", path: "/products" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -151,14 +153,14 @@ const Navbar: React.FC = () => {
           </button> */}
 
           <Link
-            to="/signin"
+            to={isAuthenticated ? "/lms" : "/signin"}
             className={`px-8 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all ${
               isDarkMode
                 ? "bg-white text-black hover:bg-zinc-200 shadow-xl shadow-black/20"
                 : "bg-black text-white hover:bg-zinc-800 shadow-xl shadow-black/20"
             }`}
           >
-            Login
+            {isAuthenticated ? "Dashboard" : "Login"}
           </Link>
 
           {/* Mobile Menu Button */}

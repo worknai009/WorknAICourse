@@ -11,14 +11,17 @@ import Auth from './pages/Auth';
 import RequestCallback from './pages/RequestCallback';
 import Footer from './components/Footer';
 import Products from './pages/Products';
+import { AuthProvider } from './AuthContext';
+import { NotificationProvider } from './NotificationContext';
+import LMSDashboard from './pages/lms/Dashboard';
+import Checkout from './pages/Checkout';
 
 // AppContent component - handles routing and layout
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isAuthPage =
-    location.pathname === '/signin' ||
-    location.pathname === '/signup' ||
-    location.pathname === '/callback';
+  const isLmsPage = location.pathname.startsWith('/lms');
+  const isCheckoutPage = location.pathname.startsWith('/checkout');
+  const hideChrome = isLmsPage || isCheckoutPage;
 
   // Scroll to top on route change
   useEffect(() => {
@@ -27,7 +30,7 @@ const AppContent: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      {!hideChrome && <Navbar />}
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -37,9 +40,11 @@ const AppContent: React.FC = () => {
           <Route path="/signup" element={<Auth type="signup" />} />
           <Route path="/callback" element={<RequestCallback />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/checkout/:id" element={<Checkout />} />
+          <Route path="/lms/*" element={<LMSDashboard />} />
         </Routes>
       </main>
-      {!isAuthPage && <Footer />}
+      {!hideChrome && <Footer />}
     </>
   );
 };
@@ -90,11 +95,15 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider>
-      <DataContext.Provider value={{ courses, isLoading, error }}>
-        <Router>
-          <AppContent />
-        </Router>
-      </DataContext.Provider>
+      <AuthProvider>
+        <NotificationProvider>
+          <DataContext.Provider value={{ courses, isLoading, error }}>
+            <Router>
+              <AppContent />
+            </Router>
+          </DataContext.Provider>
+        </NotificationProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

@@ -17,16 +17,23 @@ const apiClient: AxiosInstance = axios.create({
 // Request interceptor for adding auth tokens if needed
 apiClient.interceptors.request.use(
   (config) => {
-    // Add auth token if available
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Get token from worknai_user object in localStorage
+    const storedUser = localStorage.getItem("worknai_user");
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        if (user && user.token) {
+          config.headers.Authorization = `Bearer ${user.token}`;
+        }
+      } catch (e) {
+        console.error("Error parsing stored user for token", e);
+      }
     }
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor for error handling
@@ -44,7 +51,7 @@ apiClient.interceptors.response.use(
       console.error("Request Error:", error.message);
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // Type Definitions matching backend schema
@@ -52,6 +59,12 @@ export type CourseStatus = "Online" | "Offline" | "Hybrid";
 
 export interface Topic {
   name: string;
+  video?: {
+    url: string;
+    provider: string;
+    duration?: number;
+    isPreview?: boolean;
+  };
   _id?: string;
 }
 
@@ -77,6 +90,13 @@ export interface TechnicalSpec {
   _id?: string;
 }
 
+export interface Resource {
+  title: string;
+  url: string;
+  type: "link" | "pdf" | "zip" | "doc";
+  _id?: string;
+}
+
 // UPDATED: Course interface with array-based status
 export interface Course {
   _id: string;
@@ -96,6 +116,7 @@ export interface Course {
 export interface CourseDetail extends Course {
   technicalSpecs: TechnicalSpec[];
   syllabusPhases: SyllabusPhase[];
+  resources: Resource[];
 }
 
 export interface CoursesResponse {
@@ -125,8 +146,80 @@ export interface SearchParams {
   status?: CourseStatus; // Single status for filtering
 }
 
+export interface Doubt {
+  _id: string;
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  courseId: {
+    _id: string;
+    name: string;
+  };
+  topicId: string;
+  topicTitle: string;
+  query: string;
+  status: "pending" | "resolved";
+  response?: string;
+  mentorId?: string;
+  createdAt: string;
+}
+
+export interface DoubtData {
+  courseId: string;
+  topicId: string;
+  topicTitle: string;
+  query: string;
+}
+
+// Auth Response Interface
+export interface AuthResponse {
+  success: boolean;
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  token: string;
+}
+
 // API Service Class
 class CourseAPI {
+  /**
+   * Register a new user
+   * @param userData - User registration data
+   */
+  async register(userData: any): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        "/api/auth/register",
+        userData,
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Registration failed",
+      );
+    }
+  }
+
+  /**
+   * Login user
+   * @param credentials - User login credentials
+   */
+  async login(credentials: any): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        "/api/auth/login",
+        credentials,
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(axiosError.response?.data?.message || "Login failed");
+    }
+  }
   /**
    * Get all active courses
    * @param params - Optional query parameters for filtering and pagination
@@ -153,7 +246,7 @@ class CourseAPI {
       console.error("API Error in getAllCourses:", axiosError);
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to fetch courses. Please try again later."
+          "Failed to fetch courses. Please try again later.",
       );
     }
   }
@@ -165,7 +258,7 @@ class CourseAPI {
   async getCourseById(id: string): Promise<CourseDetail> {
     try {
       const response = await apiClient.get<CourseResponse>(
-        `/api/courses/${id}`
+        `/api/courses/${id}`,
       );
 
       // Backend returns { success, data }
@@ -183,7 +276,7 @@ class CourseAPI {
 
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to fetch course details. Please try again later."
+          "Failed to fetch course details. Please try again later.",
       );
     }
   }
@@ -202,7 +295,7 @@ class CourseAPI {
         "/api/courses/search",
         {
           params: { q: query },
-        }
+        },
       );
 
       // Backend returns { success, count, query, data }
@@ -222,7 +315,7 @@ class CourseAPI {
 
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to search courses. Please try again later."
+          "Failed to search courses. Please try again later.",
       );
     }
   }
@@ -238,7 +331,7 @@ class CourseAPI {
         "/api/courses/price-range",
         {
           params: { min, max },
-        }
+        },
       );
 
       if (response.data.success && Array.isArray(response.data.data)) {
@@ -251,7 +344,7 @@ class CourseAPI {
       console.error("API Error in getCoursesByPriceRange:", axiosError);
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to fetch courses by price range."
+          "Failed to fetch courses by price range.",
       );
     }
   }
@@ -264,7 +357,7 @@ class CourseAPI {
   async getCoursesByStatus(status: CourseStatus): Promise<Course[]> {
     try {
       const response = await apiClient.get<CoursesResponse>(
-        `/api/courses/status/${status}`
+        `/api/courses/status/${status}`,
       );
 
       if (response.data.success && Array.isArray(response.data.data)) {
@@ -277,7 +370,7 @@ class CourseAPI {
       console.error("API Error in getCoursesByStatus:", axiosError);
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to fetch courses by status."
+          "Failed to fetch courses by status.",
       );
     }
   }
@@ -292,7 +385,7 @@ class CourseAPI {
         "/api/courses/featured",
         {
           params: { limit },
-        }
+        },
       );
 
       if (response.data.success && Array.isArray(response.data.data)) {
@@ -305,7 +398,7 @@ class CourseAPI {
       console.error("API Error in getFeaturedCourses:", axiosError);
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to fetch featured courses."
+          "Failed to fetch featured courses.",
       );
     }
   }
@@ -315,7 +408,7 @@ class CourseAPI {
    * @param id - Course custom ID
    */
   async getCourseSyllabus(
-    id: string
+    id: string,
   ): Promise<{ id: string; name: string; syllabus: SyllabusPhase[] }> {
     try {
       const response = await apiClient.get<{
@@ -331,7 +424,8 @@ class CourseAPI {
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       throw new Error(
-        axiosError.response?.data?.message || "Failed to fetch course syllabus."
+        axiosError.response?.data?.message ||
+          "Failed to fetch course syllabus.",
       );
     }
   }
@@ -358,13 +452,13 @@ class CourseAPI {
       if (axiosError.response?.status === 400) {
         const errors = axiosError.response.data.errors;
         throw new Error(
-          errors ? errors.join(", ") : axiosError.response.data.message
+          errors ? errors.join(", ") : axiosError.response.data.message,
         );
       }
 
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to create course. Please try again later."
+          "Failed to create course. Please try again later.",
       );
     }
   }
@@ -376,7 +470,7 @@ class CourseAPI {
    */
   async updateCourse(
     id: string,
-    courseData: Partial<CourseDetail>
+    courseData: Partial<CourseDetail>,
   ): Promise<CourseDetail> {
     try {
       const response = await apiClient.put<{
@@ -399,13 +493,13 @@ class CourseAPI {
       if (axiosError.response?.status === 400) {
         const errors = axiosError.response.data.errors;
         throw new Error(
-          errors ? errors.join(", ") : axiosError.response.data.message
+          errors ? errors.join(", ") : axiosError.response.data.message,
         );
       }
 
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to update course. Please try again later."
+          "Failed to update course. Please try again later.",
       );
     }
   }
@@ -426,7 +520,7 @@ class CourseAPI {
 
       throw new Error(
         axiosError.response?.data?.message ||
-          "Failed to delete course. Please try again later."
+          "Failed to delete course. Please try again later.",
       );
     }
   }
@@ -436,7 +530,7 @@ class CourseAPI {
    * @param courses - Array of course data
    */
   async bulkCreateCourses(
-    courses: Partial<CourseDetail>[]
+    courses: Partial<CourseDetail>[],
   ): Promise<CourseDetail[]> {
     try {
       const response = await apiClient.post<{
@@ -450,7 +544,134 @@ class CourseAPI {
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       throw new Error(
-        axiosError.response?.data?.message || "Failed to bulk create courses."
+        axiosError.response?.data?.message || "Failed to bulk create courses.",
+      );
+    }
+  }
+
+  /**
+   * Update user progress for a specific course topic
+   * @param courseId - MongoDB _id of the course
+   * @param topicId - MongoDB _id of the topic
+   */
+  async updateProgress(courseId: string, topicId: string): Promise<any> {
+    try {
+      const response = await apiClient.post("/api/user/progress", {
+        courseId,
+        topicId,
+      });
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to update progress.",
+      );
+    }
+  }
+
+  /**
+   * Remove user progress for a specific course topic (unmark completion)
+   * @param courseId - MongoDB _id of the course
+   * @param topicId - MongoDB _id of the topic
+   */
+  async removeProgress(courseId: string, topicId: string): Promise<any> {
+    try {
+      const response = await apiClient.post("/api/user/progress/remove", {
+        courseId,
+        topicId,
+      });
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to remove progress.",
+      );
+    }
+  }
+
+  /**
+   * Get all progress for the current user
+   */
+  async getProgress(): Promise<any[]> {
+    try {
+      const response = await apiClient.get("/api/user/progress");
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch progress.",
+      );
+    }
+  }
+
+  /**
+   * Submit a doubt query
+   */
+  async submitDoubt(data: DoubtData): Promise<Doubt> {
+    try {
+      const response = await apiClient.post<{ success: boolean; data: Doubt }>(
+        "/api/doubts",
+        data,
+      );
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to submit doubt.",
+      );
+    }
+  }
+
+  /**
+   * Get all doubts (Student only sees their own, Admin sees all via separate endpoint if needed, but current getUserDoubts handles student)
+   */
+  async getMyDoubts(): Promise<Doubt[]> {
+    try {
+      const response = await apiClient.get<{ success: boolean; data: Doubt[] }>(
+        "/api/doubts/my-doubts",
+      );
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch doubts.",
+      );
+    }
+  }
+
+  /**
+   * Get all doubts (Admin only)
+   */
+  async getAllDoubts(): Promise<Doubt[]> {
+    try {
+      const response = await apiClient.get<{ success: boolean; data: Doubt[] }>(
+        "/api/doubts/all",
+      );
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch all doubts.",
+      );
+    }
+  }
+
+  /**
+   * Resolve a doubt (Admin only)
+   */
+  async resolveDoubt(doubtId: string, responseText: string): Promise<Doubt> {
+    try {
+      const response = await apiClient.patch<{ success: boolean; data: Doubt }>(
+        `/api/doubts/${doubtId}/resolve`,
+        {
+          response: responseText,
+        },
+      );
+      return response.data.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message: string }>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to resolve doubt.",
       );
     }
   }

@@ -7,6 +7,7 @@ import coursesApi from "../../services/api";
 import type { Course } from "../../services/api";
 
 type SortOption = "default" | "price-low" | "price-high" | "name-az";
+type StatusFilter = "all" | "Online" | "Offline" | "Hybrid";
 
 const Courses: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -14,6 +15,7 @@ const Courses: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [sortOption, setSortOption] = useState<SortOption>("default");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [titleReady, setTitleReady] = useState(false);
@@ -49,7 +51,7 @@ const Courses: React.FC = () => {
 
         // Ensure we only show active courses
         const activeCourses = data.filter(
-          (course) => course.isActive !== false
+          (course) => course.isActive !== false,
         );
         setCourses(activeCourses);
       } catch (err: Error | unknown) {
@@ -82,7 +84,7 @@ const Courses: React.FC = () => {
           duration: 1,
           stagger: 0.03,
           ease: "expo.out",
-        }
+        },
       );
 
       gsap.fromTo(
@@ -97,21 +99,26 @@ const Courses: React.FC = () => {
           duration: 1,
           delay: 0.4,
           ease: "power3.out",
-        }
+        },
       );
     });
 
     return () => cancelAnimationFrame(animationTimer);
   }, []);
 
-  // Sort courses with useMemo for optimization
-  const sortedCourses = useMemo(() => {
+  // Filter and sort courses with useMemo for optimization
+  const filteredCourses = useMemo(() => {
     // Ensure courses is always an array
     if (!Array.isArray(courses)) {
       return [];
     }
 
-    const result = [...courses];
+    let result = [...courses];
+
+    // Apply status filter
+    if (statusFilter !== "all") {
+      result = result.filter((course) => course.status === statusFilter);
+    }
 
     // Apply sorting
     switch (sortOption) {
@@ -130,11 +137,12 @@ const Courses: React.FC = () => {
     }
 
     return result;
-  }, [courses, sortOption]);
+  }, [courses, sortOption, statusFilter]);
 
   const handleClearFilters = () => {
     setSearchQuery("");
     setSortOption("default");
+    setStatusFilter("all");
   };
 
   const titleText = "Courses";
@@ -228,6 +236,43 @@ const Courses: React.FC = () => {
               )}
             </div>
 
+            {/* Status Filter */}
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <span
+                className={`text-[10px] font-black uppercase tracking-widest hidden md:block ${
+                  isDarkMode ? "text-zinc-400" : "text-zinc-600"
+                }`}
+              >
+                Mode:
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: "All", value: "all" },
+                  { label: "Online", value: "Online" },
+                  { label: "Offline", value: "Offline" },
+                  { label: "Hybrid", value: "Hybrid" },
+                ].map((status) => (
+                  <button
+                    key={status.value}
+                    onClick={() =>
+                      setStatusFilter(status.value as StatusFilter)
+                    }
+                    className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                      statusFilter === status.value
+                        ? isDarkMode
+                          ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/40"
+                          : "bg-black text-white"
+                        : isDarkMode
+                          ? "bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700"
+                          : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                    }`}
+                  >
+                    {status.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Sort Options */}
             <div className="flex items-center gap-3 w-full md:w-auto">
               <span
@@ -253,8 +298,8 @@ const Courses: React.FC = () => {
                           ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/40"
                           : "bg-blue-600 text-white"
                         : isDarkMode
-                        ? "bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700"
-                        : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                          ? "bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700"
+                          : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
                     }`}
                   >
                     {opt.label}
@@ -275,8 +320,8 @@ const Courses: React.FC = () => {
                 isDarkMode ? "text-zinc-400" : "text-zinc-600"
               }`}
             >
-              {sortedCourses.length}{" "}
-              {sortedCourses.length === 1 ? "Course" : "Courses"}
+              {filteredCourses.length}{" "}
+              {filteredCourses.length === 1 ? "Course" : "Courses"}
             </span>
           </div>
         </div>
@@ -367,12 +412,12 @@ const Courses: React.FC = () => {
         {/* Courses Grid */}
         {!isLoading && !error && (
           <AnimatePresence mode="popLayout">
-            {sortedCourses.length > 0 ? (
+            {filteredCourses.length > 0 ? (
               <motion.div
                 layout
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12"
               >
-                {sortedCourses.map((course) => (
+                {filteredCourses.map((course) => (
                   <motion.div
                     key={course._id}
                     layout
@@ -424,20 +469,18 @@ const Courses: React.FC = () => {
                 >
                   {searchQuery
                     ? `No courses match "${searchQuery}"`
-                    : "Check back later for new courses."}
+                    : "Try adjusting your filters or check back later."}
                 </p>
-                {searchQuery && (
-                  <button
-                    onClick={handleClearFilters}
-                    className={`mt-8 px-8 py-3 rounded-full border-2 font-black text-xs uppercase tracking-widest transition-all ${
-                      isDarkMode
-                        ? "border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                        : "border-zinc-300 text-zinc-700 hover:bg-zinc-100"
-                    }`}
-                  >
-                    Clear Search
-                  </button>
-                )}
+                <button
+                  onClick={handleClearFilters}
+                  className={`mt-8 px-8 py-3 rounded-full border-2 font-black text-xs uppercase tracking-widest transition-all ${
+                    isDarkMode
+                      ? "border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      : "border-zinc-300 text-zinc-700 hover:bg-zinc-100"
+                  }`}
+                >
+                  Clear Filters
+                </button>
               </motion.div>
             )}
           </AnimatePresence>

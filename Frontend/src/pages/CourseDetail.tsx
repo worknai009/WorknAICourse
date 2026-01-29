@@ -229,12 +229,16 @@ const CourseDetailPage: React.FC = () => {
     });
   }, [course, navigate]);
 
+  const handleEnrollNow = useCallback(() => {
+    navigate(`/checkout/${course?.id || course?._id}`);
+  }, [course, navigate]);
+
   // Memoized calculations
   const discountPercent = useMemo(() => {
     if (!course) return 0;
     return Math.round(
       ((course.originalPrice - course.discountedPrice) / course.originalPrice) *
-        100
+        100,
     );
   }, [course]);
 
@@ -447,14 +451,24 @@ const CourseDetailPage: React.FC = () => {
               </p>
               <div className="mt-8 flex flex-wrap gap-4 relative z-10">
                 <button
-                  onClick={handleReserveSlot}
+                  onClick={handleEnrollNow}
                   className={`px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl ${
                     isDarkMode
                       ? "bg-white text-black hover:bg-cyan-400"
-                      : "bg-black text-white hover:bg-blue-600"
+                      : "bg-indigo-600 text-white hover:bg-black"
                   }`}
                 >
-                  Initialize Career Track
+                  Enroll Now
+                </button>
+                <button
+                  onClick={handleReserveSlot}
+                  className={`px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 hover:scale-105 active:scale-95 border-2 ${
+                    isDarkMode
+                      ? "border-white/10 text-white hover:bg-white/5"
+                      : "border-black/10 text-black hover:bg-black/5"
+                  }`}
+                >
+                  Reserve Slot
                 </button>
               </div>
             </motion.div>
@@ -539,11 +553,11 @@ const CourseDetailPage: React.FC = () => {
               </span>
               <div className="flex items-baseline gap-4">
                 <span className="text-5xl md:text-6xl font-bold font-inter tracking-tighter">
-                  ₹{course.discountedPrice.toLocaleString("en-IN")}
+                  â‚¹{course.discountedPrice.toLocaleString("en-IN")}
                 </span>
                 {course.originalPrice !== course.discountedPrice && (
                   <span className="text-sm line-through opacity-20">
-                    ₹{course.originalPrice.toLocaleString("en-IN")}
+                    â‚¹{course.originalPrice.toLocaleString("en-IN")}
                   </span>
                 )}
               </div>
@@ -564,14 +578,14 @@ const CourseDetailPage: React.FC = () => {
             )}
           </div>
 
-          <div className="flex items-center justify-center relative z-10">
+          <div className="flex flex-col sm:flex-row shadow-2xl items-center justify-center relative z-10 gap-4">
             <button
-              onClick={handleReserveSlot}
-              className={`px-10 md:px-12 py-5 md:py-6 rounded-3xl font-black text-xs uppercase tracking-[0.3em] flex items-center gap-4 transition-all duration-300 hover:scale-105 active:scale-95 ${
-                isDarkMode ? "bg-white text-black" : "bg-black text-white"
+              onClick={handleEnrollNow}
+              className={`px-10 md:px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.3em] flex items-center gap-4 transition-all duration-300 hover:scale-105 active:scale-95 ${
+                isDarkMode ? "bg-white text-black" : "bg-indigo-600 text-white"
               }`}
             >
-              Reserve Slot
+              Enroll Now
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -586,6 +600,16 @@ const CourseDetailPage: React.FC = () => {
                   d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                 />
               </svg>
+            </button>
+            <button
+              onClick={handleReserveSlot}
+              className={`px-10 md:px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.3em] transition-all duration-300 hover:scale-105 active:scale-95 border-2 ${
+                isDarkMode
+                  ? "border-white/10 text-white"
+                  : "border-black/10 text-black"
+              }`}
+            >
+              Reserve Slot
             </button>
           </div>
         </motion.div>
@@ -638,8 +662,8 @@ const CourseDetailPage: React.FC = () => {
                       ? "bg-cyan-500 border-cyan-400 text-white shadow-2xl"
                       : "bg-black border-black text-white shadow-2xl shadow-black/20"
                     : isDarkMode
-                    ? "bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white"
-                    : "bg-white border-zinc-100 text-zinc-400 hover:border-black shadow-sm"
+                      ? "bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white"
+                      : "bg-white border-zinc-100 text-zinc-400 hover:border-black shadow-sm"
                 }`}
               >
                 <div
@@ -843,7 +867,7 @@ const CourseDetailPage: React.FC = () => {
                       {tag}
                     </p>
                   </div>
-                )
+                ),
               )}
             </div>
 

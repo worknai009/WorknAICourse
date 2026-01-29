@@ -12,6 +12,7 @@ const RequestCallback: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,6 +64,7 @@ const RequestCallback: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    setError(null);
 
     const formData = new FormData(e.target as HTMLFormElement);
     const data = {
@@ -89,11 +91,15 @@ const RequestCallback: React.FC = () => {
       setSelectedCourse(null);
     } catch (err) {
       console.error("Error submitting form:", err);
-      // Show error to user
-      alert("Failed to submit. Please try again.");
+      setError("Failed to submit. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleNewRequest = () => {
+    setIsSuccess(false);
+    setError(null);
   };
 
   return (
@@ -181,11 +187,12 @@ const RequestCallback: React.FC = () => {
           </div>
         </div>
 
+        {/* Right Side: Specialized Form */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, x: 50 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className={`lg:col-span-5 justify-self-end w-full max-w-lg relative p-6 md:p-8 lg:p-10 rounded-[2.5rem] md:rounded-[3.5rem] refractive-border border liquid-glass shadow-2xl overflow-visible ${
+          className={`lg:col-span-5 justify-self-end w-full max-w-lg relative p-6 md:p-8 lg:p-10 rounded-[2.5rem] md:rounded-[3.5rem] refractive-border border liquid-glass shadow-2xl ${
             isDarkMode
               ? "bg-zinc-950/40 border-white/5"
               : "bg-white/40 border-white/20"
@@ -196,11 +203,10 @@ const RequestCallback: React.FC = () => {
               <motion.form
                 key="form"
                 onSubmit={handleSubmit}
-                className="space-y-4 lg:space-y-5 relative overflow-visible"
+                className="space-y-4 lg:space-y-5"
                 exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
               >
-                {/* Full Name - Lower Z-Index */}
-                <div className="form-item relative z-10">
+                <div className="form-item">
                   <label
                     className={`block text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 ml-1 ${
                       isDarkMode ? "text-white" : "text-zinc-500"
@@ -221,11 +227,8 @@ const RequestCallback: React.FC = () => {
                   />
                 </div>
 
-                {/* Grid Row - Needs higher Z-index than items below it */}
                 <div
-                  className={`grid grid-cols-1 sm:grid-cols-2 gap-4 relative ${
-                    isDropdownOpen ? "z-50" : "z-20"
-                  }`}
+                  className={`grid grid-cols-1 sm:grid-cols-2 gap-4 relative ${isDropdownOpen ? "z-[100]" : "z-10"}`}
                 >
                   <div className="form-item">
                     <label
@@ -240,6 +243,8 @@ const RequestCallback: React.FC = () => {
                       name="phone"
                       type="tel"
                       placeholder="+91 00000 00000"
+                      pattern="[+]?[0-9\s-]{10,15}"
+                      title="Please enter a valid phone number"
                       className={`w-full h-12 md:h-14 px-6 rounded-xl border-2 outline-none transition-all font-bold text-xs ${
                         isDarkMode
                           ? "bg-zinc-950/50 border-zinc-800 focus:border-cyan-500/50 text-white placeholder-zinc-500"
@@ -248,8 +253,13 @@ const RequestCallback: React.FC = () => {
                     />
                   </div>
 
-                  {/* Dropdown Container - The highest Z-index */}
-                  <div className="form-item relative" ref={dropdownRef}>
+                  {/* Dropdown Container with Dynamic Z-Index to avoid overlap */}
+                  <div
+                    className={`form-item relative ${
+                      isDropdownOpen ? "z-[100]" : "z-10"
+                    }`}
+                    ref={dropdownRef}
+                  >
                     <label
                       className={`block text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 ml-1 ${
                         isDarkMode ? "text-white" : "text-zinc-500"
@@ -277,21 +287,22 @@ const RequestCallback: React.FC = () => {
                               ? "text-zinc-500"
                               : "text-zinc-400"
                             : isDarkMode
-                            ? "text-white"
-                            : "text-zinc-900"
+                              ? "text-white"
+                              : "text-zinc-900"
                         }
                       >
                         {selectedCourse || "SELECT TRACK"}
                       </span>
                       <motion.svg
                         animate={{ rotate: isDropdownOpen ? 180 : 0 }}
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={3}
+                        stroke="currentColor"
                         className={`w-3 h-3 ${
                           isDarkMode ? "text-cyan-400" : "text-zinc-400"
                         }`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={3}
                       >
                         <path
                           strokeLinecap="round"
@@ -308,7 +319,7 @@ const RequestCallback: React.FC = () => {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 5, scale: 0.98 }}
                           transition={{ duration: 0.2, ease: "easeOut" }}
-                          className={`absolute left-0 right-0 mt-2 p-2 rounded-2xl border shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-3xl max-h-[220px] overflow-y-auto z-[100] ${
+                          className={`absolute left-0 right-0 mt-2 p-2 rounded-2xl border shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-3xl overflow-hidden max-h-[220px] overflow-y-auto z-[110] ${
                             isDarkMode
                               ? "bg-zinc-900/95 border-zinc-800 shadow-cyan-950/30"
                               : "bg-white/95 border-zinc-200 shadow-black/10"
@@ -328,8 +339,8 @@ const RequestCallback: React.FC = () => {
                                     ? "bg-cyan-500 text-white"
                                     : "bg-black text-white"
                                   : isDarkMode
-                                  ? "hover:bg-white/10 text-zinc-400 hover:text-white"
-                                  : "hover:bg-zinc-100 text-zinc-500 hover:text-black"
+                                    ? "hover:bg-white/10 text-zinc-400 hover:text-white"
+                                    : "hover:bg-zinc-100 text-zinc-500 hover:text-black"
                               }`}
                             >
                               {c.name}
@@ -341,8 +352,7 @@ const RequestCallback: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Preferred Slot - Explicitly Lower Z-Index */}
-                <div className="form-item relative z-0">
+                <div className="form-item">
                   <label
                     className={`block text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 ml-1 ${
                       isDarkMode ? "text-white" : "text-zinc-500"
@@ -375,39 +385,73 @@ const RequestCallback: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Submit Button - Explicitly Lower Z-Index */}
-                <div className="form-item pt-2 relative z-0">
+                {error && (
+                  <div className="form-item">
+                    <p className="text-red-500 text-xs font-bold text-center">
+                      {error}
+                    </p>
+                  </div>
+                )}
+
+                <div className="form-item pt-2">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full py-5 lg:py-6 rounded-[1.5rem] md:rounded-[1.8rem] font-black text-sm lg:text-base uppercase tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 shadow-2xl flex items-center justify-center gap-3 disabled:opacity-50 ${
+                    className={`w-full py-5 lg:py-6 rounded-[1.5rem] md:rounded-[1.8rem] font-black text-sm lg:text-base uppercase tracking-widest transition-all transform hover:scale-[1.02] active:scale-95 shadow-2xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
                       isDarkMode
-                        ? "bg-cyan-500 text-white shadow-cyan-900/20"
-                        : "bg-black text-white shadow-black/20"
+                        ? "bg-cyan-500 text-white hover:bg-cyan-400 shadow-cyan-900/20"
+                        : "bg-black text-white hover:bg-zinc-800 shadow-black/20"
                     }`}
                   >
-                    {isSubmitting ? "Submitting..." : "Get Callback"}
+                    {isSubmitting ? (
+                      <>
+                        <span className="animate-spin h-4 w-4 border-2 rounded-full border-t-transparent border-white"></span>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        Get Callback
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={3}
+                          stroke="currentColor"
+                          className="w-4 h-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                          />
+                        </svg>
+                      </>
+                    )}
                   </button>
+                  <p className="text-center text-[7px] font-black text-zinc-500 uppercase tracking-[0.2em] mt-3 opacity-60">
+                    Industry-First Response Transparency
+                  </p>
                 </div>
               </motion.form>
             ) : (
-              /* Success State */
               <motion.div
                 key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="text-center py-6 lg:py-10 relative z-10 space-y-6"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-6 md:py-10 lg:py-12 space-y-6"
               >
-                {/* Success Icon */}
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="mx-auto w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-2xl"
+                <div
+                  className={`w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full flex items-center justify-center ${
+                    isDarkMode ? "bg-cyan-500/20" : "bg-green-100"
+                  }`}
                 >
-                  <svg
-                    className="w-10 h-10 md:w-12 md:h-12 text-white"
+                  <motion.svg
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1, ease: "easeInOut" }}
+                    className={`w-8 h-8 md:w-10 md:h-10 ${
+                      isDarkMode ? "text-cyan-400" : "text-green-600"
+                    }`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -418,48 +462,26 @@ const RequestCallback: React.FC = () => {
                       strokeLinejoin="round"
                       d="M5 13l4 4L19 7"
                     />
-                  </svg>
-                </motion.div>
-
-                {/* Success Message */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="space-y-3"
-                >
-                  <h3
-                    className={`text-2xl md:text-3xl lg:text-4xl font-black font-syne tracking-tighter ${
-                      isDarkMode ? "text-white" : "text-zinc-900"
-                    }`}
-                  >
-                    Request Received!
+                  </motion.svg>
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-black font-syne uppercase tracking-tight italic mb-2">
+                    Priority Logged
                   </h3>
-                  <p
-                    className={`text-sm md:text-base font-medium leading-relaxed max-w-md mx-auto ${
-                      isDarkMode ? "text-zinc-400" : "text-zinc-600"
-                    }`}
-                  >
-                    Our academic team will contact you within{" "}
-                    <span className="font-black text-cyan-500">24 Hours</span>{" "}
-                    to discuss your journey.
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-[9px] leading-relaxed max-w-[220px] md:max-w-[280px] mx-auto">
+                    Your request is now visible on our Academic priority board.
                   </p>
-                </motion.div>
-
-                {/* Action Button */}
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  onClick={() => setIsSuccess(false)}
-                  className={`mt-6 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all hover:scale-105 ${
+                </div>
+                <button
+                  onClick={handleNewRequest}
+                  className={`px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest border-2 transition-all hover:scale-105 active:scale-95 ${
                     isDarkMode
-                      ? "bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white"
-                      : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-black"
+                      ? "border-zinc-800 text-white hover:border-cyan-500"
+                      : "border-zinc-200 text-zinc-900 hover:border-black"
                   }`}
                 >
-                  Submit Another Request
-                </motion.button>
+                  New Request
+                </button>
               </motion.div>
             )}
           </AnimatePresence>

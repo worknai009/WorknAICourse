@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import gsap from "gsap";
@@ -12,6 +18,9 @@ import BentoGrid from "../components/BentoGrid";
 
 gsap.registerPlugin(ScrollTrigger);
 
+type CourseStatus = "Online" | "Offline" | "Hybrid";
+type FilterType = CourseStatus | "All";
+
 const Home: React.FC = () => {
   const { isDarkMode } = useTheme();
   const targetRef = useRef<HTMLDivElement>(null);
@@ -20,6 +29,17 @@ const Home: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [filter, setFilter] = useState<FilterType>("All");
+
+  const filteredCourses = useMemo(() => {
+    if (!Array.isArray(courses)) return [];
+    if (filter === "All") return courses;
+    return courses.filter((course) => course.status === filter);
+  }, [courses, filter]);
+
+  const handleFilterChange = useCallback((newFilter: FilterType) => {
+    setFilter(newFilter);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -89,6 +109,8 @@ const Home: React.FC = () => {
     };
   }, []);
 
+  const filterButtons: FilterType[] = ["All", "Online", "Offline", "Hybrid"];
+
   return (
     <div className="relative" ref={targetRef}>
       {/* Background Grid */}
@@ -112,7 +134,7 @@ const Home: React.FC = () => {
           </>
         ) : (
           <>
-            <div className="absolute top-20 right-0 w-100 md:w-150 h-150 md:h-150 bg-emerald-200/30 blur-[120px] rounded-full pointer-events-none animate-float" />
+            <div className="absolute top-20 right-0 w100] md:w-150 h-150 md:h-150 bg-emerald-200/30 blur-[120px] rounded-full pointer-events-none animate-float" />
             <div
               className="absolute bottom-20 left-0 w-100 md:w-150 h-150 md:h-150 bg-rose-200/30 blur-[120px] rounded-full pointer-events-none"
               style={{ animation: "float 8s ease-in-out infinite reverse" }}
@@ -468,14 +490,42 @@ const Home: React.FC = () => {
         className="py-20 px-6 md:px-12 bg-transparent relative"
       >
         <div className="max-w-400 mx-auto">
-          <div className="mb-12 reveal">
-            <h2
-              className={`text-5xl md:text-7xl font-black leading-[0.8] tracking-tighter uppercase transition-colors duration-500 ${
-                isDarkMode ? "text-white" : "text-black"
+          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-12 gap-8 reveal">
+            <div className="max-w-3xl">
+              <h2
+                className={`text-5xl md:text-7xl font-black leading-[0.8] tracking-tighter uppercase transition-colors duration-500 ${
+                  isDarkMode ? "text-white" : "text-black"
+                }`}
+              >
+                Courses Offered
+              </h2>
+            </div>
+
+            <div
+              className={`p-2 flex flex-wrap rounded-3xl border transition-all duration-300 ${
+                isDarkMode
+                  ? "bg-zinc-900/50 border-zinc-800"
+                  : "bg-white border-zinc-200 shadow-sm"
               }`}
             >
-              Courses Offered
-            </h2>
+              {filterButtons.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => handleFilterChange(cat)}
+                  className={`px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
+                    filter === cat
+                      ? isDarkMode
+                        ? "bg-cyan-500 text-white shadow-xl shadow-cyan-900/40"
+                        : "bg-black text-white shadow-lg"
+                      : isDarkMode
+                        ? "text-zinc-400 hover:text-cyan-500 hover:bg-zinc-800/50"
+                        : "text-zinc-600 hover:text-black hover:bg-zinc-100"
+                  }`}
+                >
+                  {cat === "All" ? "All Tracks" : `${cat} Mode`}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Loading State */}
@@ -520,8 +570,8 @@ const Home: React.FC = () => {
           {/* Courses Grid */}
           {!loading && !error && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {courses.length > 0 ? (
-                courses.map((course) => (
+              {filteredCourses.length > 0 ? (
+                filteredCourses.map((course) => (
                   <CourseCard key={course.id} course={course} />
                 ))
               ) : (
@@ -531,7 +581,7 @@ const Home: React.FC = () => {
                       isDarkMode ? "text-zinc-400" : "text-zinc-600"
                     }`}
                   >
-                    No courses available at the moment.
+                    No courses found for this category.
                   </p>
                 </div>
               )}

@@ -1,7 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --lms-primary: #6366f1;
+    --lms-bg-light: #f8fafc;
+    --lms-sidebar-light: #ffffff;
+    --lms-bg-dark: #020617;
+    --lms-sidebar-dark: #0f172a;
+  }
+
+  html,
+  body {
+    font-family: "Inter", sans-serif;
+  }
+}
+
+@layer components {
+  .lms-card {
+    @apply rounded-3xl border transition-all duration-500 overflow-hidden;
+  }
+
+  .lms-card-light {
+    @apply bg-white border-slate-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)];
+  }
+
+  .lms-card-dark {
+    @apply bg-slate-900/40 border-slate-800/50 backdrop-blur-xl hover:border-indigo-500/30;
+  }
+
+  .lms-sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 mx-3 font-medium text-sm;
+  }
+}
 
 /* Custom Layer Styles */
 @layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --blueprint-line: rgba(0, 0, 0, 0.05);
+  }
+
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -10,18 +50,24 @@
 
   html {
     scroll-behavior: smooth;
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    margin: 0;
+    min-height: 100vh;
   }
 }
 
 @layer components {
   /* Blueprint Grid Pattern */
   .blueprint-grid {
-    background-image: linear-gradient(
-        to right,
-        currentColor 1px,
-        transparent 1px
-      ),
-      linear-gradient(to bottom, currentColor 1px, transparent 1px);
+    background-image:
+      linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
@@ -138,6 +184,14 @@
   .group:hover {
     contain: layout style paint;
   }
+
+  /* Animation Delays */
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
 }
 
 /* Keyframe Animations */
@@ -145,8 +199,9 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-33.333%);
   }
 }
 
@@ -155,6 +210,7 @@
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
@@ -164,6 +220,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -174,52 +231,53 @@
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.8;
   }
 }
 
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+/* Gradient Flow Animation */
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 8s ease infinite;
+}
+
 /* Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
 ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-300 dark:bg-zinc-700;
+  background-color: #3f3f46;
   border-radius: 10px;
   transition: background 0.3s ease;
-}
-
-/* Custom Cursor Styles */
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--accent-cyan, #06b6d4);
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease-out;
-  will-change: transform;
-}
-
-.cursor-outline {
-  width: 40px;
-  height: 40px;
-  border: 2px solid rgba(6, 182, 212, 0.5);
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease,
-    transform 0.1s ease;
-  will-change: transform;
 }
 
 /* Performance Optimizations */
@@ -229,18 +287,6 @@
 
 [style*="gradient"] {
   transform: translateZ(0);
-}
-
-/* Hide cursor on touch devices */
-@media (hover: none) and (pointer: coarse) {
-  .cursor-dot,
-  .cursor-outline {
-    display: none;
-  }
-
-  body {
-    cursor: auto !important;
-  }
 }
 
 /* Reduced Motion Support */
@@ -256,7 +302,8 @@
 
   .animate-float,
   .animate-spin-slow,
-  .animate-reverse-spin {
+  .animate-reverse-spin,
+  .animate-blob {
     animation: none;
   }
 
@@ -267,5 +314,80 @@
 
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* Add these animations to your global CSS or Tailwind config */
+
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #818cf8, #a78bfa);
+}
+
+/* Backdrop blur support for browsers */
+@supports (backdrop-filter: blur(10px)) {
+  .backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+  }
+  .backdrop-blur {
+    backdrop-filter: blur(12px);
   }
 }

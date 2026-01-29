@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context";
+
 import type { Course } from "../../services/api";
 import { getCourseStatuses } from "../../services/api";
 
@@ -13,16 +14,13 @@ const CourseCard: React.FC<Props> = ({ course }) => {
   const { isDarkMode } = useTheme();
   const [imageError, setImageError] = useState(false);
 
-  // Get all statuses as an array (handles both string and array formats)
-  const statuses = getCourseStatuses(course);
-
   // Calculate discount percentage
   const discountPercent =
     course.originalPrice > course.discountedPrice
       ? Math.round(
           ((course.originalPrice - course.discountedPrice) /
             course.originalPrice) *
-            100
+            100,
         )
       : 0;
 
@@ -95,11 +93,10 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           )}
         </div>
 
-        {/* Bottom Info - Status(es) and Language */}
+        {/* Bottom Info - Status and Language */}
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-          {/* Status Badges - Show all available modes */}
-          <div className="flex flex-wrap gap-2">
-            {statuses.map((status) => (
+          <div className="flex flex-wrap gap-1">
+            {getCourseStatuses(course).map((status) => (
               <span
                 key={status}
                 className={`px-3 py-1.5 text-white text-[10px] font-black rounded-full uppercase tracking-widest ${
@@ -108,19 +105,18 @@ const CourseCard: React.FC<Props> = ({ course }) => {
                       ? "bg-cyan-700"
                       : "bg-blue-600"
                     : status === "Offline"
-                    ? isDarkMode
-                      ? "bg-fuchsia-700"
-                      : "bg-rose-600"
-                    : isDarkMode
-                    ? "bg-purple-700"
-                    : "bg-purple-600"
+                      ? isDarkMode
+                        ? "bg-fuchsia-700"
+                        : "bg-rose-600"
+                      : isDarkMode
+                        ? "bg-purple-700"
+                        : "bg-purple-600"
                 }`}
               >
-                {status}
+                {status} Mode
               </span>
             ))}
           </div>
-
           <span className="px-3 py-1.5 bg-black/50 backdrop-blur-md text-white text-[10px] font-black rounded-full uppercase tracking-widest">
             {course.language}
           </span>
@@ -217,30 +213,60 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           </div>
 
           {/* CTA Button */}
-          <Link
-            to={`/course/${course.id}`}
-            className={`group/btn relative overflow-hidden flex items-center justify-center gap-2 w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${
-              isDarkMode
-                ? "bg-cyan-600 text-white hover:bg-white hover:text-black shadow-lg shadow-cyan-900/30"
-                : "bg-black text-white hover:bg-blue-600 shadow-xl"
-            }`}
-          >
-            <span className="relative z-10">View Curriculum</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={3}
-              stroke="currentColor"
-              className="w-4 h-4 relative z-10 transform group-hover/btn:translate-x-1 transition-transform"
+          {/* CTA Buttons Section */}
+          <div className="flex flex-col gap-3">
+            <Link
+              to={`/checkout/${course.id || course._id}`}
+              className={`group/btn relative overflow-hidden flex items-center justify-center gap-2 w-full py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${
+                isDarkMode
+                  ? "bg-white text-black hover:bg-cyan-500 shadow-lg shadow-white/5"
+                  : "bg-indigo-600 text-white hover:bg-black shadow-xl shadow-indigo-500/20"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              />
-            </svg>
-          </Link>
+              <span className="relative z-10 tracking-widest">Enroll Now</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-4 h-4 relative z-10"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+                />
+              </svg>
+            </Link>
+
+            <Link
+              to={`/course/${course.id || course._id}`}
+              className={`group/btn relative overflow-hidden flex items-center justify-center gap-2 w-full py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all border-2 ${
+                isDarkMode
+                  ? "border-zinc-800 text-zinc-400 hover:border-white/20 hover:text-white"
+                  : "border-zinc-100 text-zinc-500 hover:border-black hover:text-black"
+              }`}
+            >
+              <span className="relative z-10 tracking-widest">
+                View Curriculum
+              </span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="w-4 h-4 relative z-10 transform group-hover/btn:translate-x-1 transition-transform"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                />
+              </svg>
+            </Link>
+          </div>
         </div>
       </div>
     </motion.div>
