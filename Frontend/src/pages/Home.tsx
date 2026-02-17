@@ -332,6 +332,128 @@ const Home: React.FC = () => {
         <Marquee />
       </div>
 
+      {/* Courses Section moved under Marquee */}
+      <section
+        id="courses"
+        className="py-20 px-6 md:px-12 bg-transparent relative"
+      >
+        <div className="max-w-400 mx-auto">
+          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-12 gap-8 reveal">
+            <div className="max-w-3xl">
+              <h2
+                className={`text-5xl md:text-7xl font-black leading-[0.8] tracking-tighter uppercase transition-colors duration-500 ${
+                  isDarkMode ? "text-white" : "text-black"
+                }`}
+              >
+                Courses Offered
+              </h2>
+            </div>
+
+            <div
+              className={`p-2 flex flex-wrap rounded-3xl border transition-all duration-300 ${
+                isDarkMode
+                  ? "bg-zinc-900/50 border-zinc-800"
+                  : "bg-white border-zinc-200 shadow-sm"
+              }`}
+            >
+              {filterButtons.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => handleFilterChange(cat)}
+                  className={`px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
+                    filter === cat
+                      ? isDarkMode
+                        ? "bg-cyan-500 text-white shadow-xl shadow-cyan-900/40"
+                        : "bg-black text-white shadow-lg"
+                      : isDarkMode
+                        ? "text-zinc-400 hover:text-cyan-500 hover:bg-zinc-800/50"
+                        : "text-zinc-600 hover:text-black hover:bg-zinc-100"
+                  }`}
+                >
+                  {cat === "All" ? "All Tracks" : `${cat} Mode`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Loading State */}
+          {loading && (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <div
+                  className={`animate-spin rounded-full h-16 w-16 border-t-4 mx-auto mb-4 ${
+                    isDarkMode ? "border-cyan-500" : "border-black"
+                  }`}
+                />
+                <p
+                  className={`text-xl font-semibold ${
+                    isDarkMode ? "text-zinc-400" : "text-zinc-600"
+                  }`}
+                >
+                  Loading courses...
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <p className="text-red-500 text-xl mb-4">Error: {error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className={`px-6 py-3 rounded-xl font-bold transition-colors duration-300 ${
+                    isDarkMode
+                      ? "bg-cyan-600 text-white hover:bg-cyan-700"
+                      : "bg-black text-white hover:bg-zinc-800"
+                  }`}
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Courses Grid */}
+          {!loading && !error && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCourses.length > 0 ? (
+                filteredCourses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-20">
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDarkMode ? "text-zinc-400" : "text-zinc-600"
+                    }`}
+                  >
+                    No courses found for this category.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* View All Courses Link */}
+          {!loading && !error && courses.length > 0 && (
+            <div className="flex justify-center mt-12">
+              <Link
+                to="/courses"
+                className={`px-10 py-5 rounded-3xl font-black text-lg uppercase tracking-tighter transition-all duration-300 ease-out hover:scale-105 ${
+                  isDarkMode
+                    ? "bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg shadow-cyan-900/40 hover:shadow-cyan-900/60"
+                    : "bg-black text-white hover:bg-zinc-800 shadow-lg shadow-black/40 hover:shadow-black/60"
+                }`}
+              >
+                View All Courses
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Philosophy Bento Grid */}
       <section className="py-20 px-6 md:px-12 relative overflow-hidden">
         {/* Background animated glows */}
@@ -481,128 +603,6 @@ const Home: React.FC = () => {
               <BentoGrid />
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Courses Section */}
-      <section
-        id="courses"
-        className="py-20 px-6 md:px-12 bg-transparent relative"
-      >
-        <div className="max-w-400 mx-auto">
-          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-12 gap-8 reveal">
-            <div className="max-w-3xl">
-              <h2
-                className={`text-5xl md:text-7xl font-black leading-[0.8] tracking-tighter uppercase transition-colors duration-500 ${
-                  isDarkMode ? "text-white" : "text-black"
-                }`}
-              >
-                Courses Offered
-              </h2>
-            </div>
-
-            <div
-              className={`p-2 flex flex-wrap rounded-3xl border transition-all duration-300 ${
-                isDarkMode
-                  ? "bg-zinc-900/50 border-zinc-800"
-                  : "bg-white border-zinc-200 shadow-sm"
-              }`}
-            >
-              {filterButtons.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => handleFilterChange(cat)}
-                  className={`px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 ${
-                    filter === cat
-                      ? isDarkMode
-                        ? "bg-cyan-500 text-white shadow-xl shadow-cyan-900/40"
-                        : "bg-black text-white shadow-lg"
-                      : isDarkMode
-                        ? "text-zinc-400 hover:text-cyan-500 hover:bg-zinc-800/50"
-                        : "text-zinc-600 hover:text-black hover:bg-zinc-100"
-                  }`}
-                >
-                  {cat === "All" ? "All Tracks" : `${cat} Mode`}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Loading State */}
-          {loading && (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center">
-                <div
-                  className={`animate-spin rounded-full h-16 w-16 border-t-4 mx-auto mb-4 ${
-                    isDarkMode ? "border-cyan-500" : "border-black"
-                  }`}
-                />
-                <p
-                  className={`text-xl font-semibold ${
-                    isDarkMode ? "text-zinc-400" : "text-zinc-600"
-                  }`}
-                >
-                  Loading courses...
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && !loading && (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center">
-                <p className="text-red-500 text-xl mb-4">Error: {error}</p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className={`px-6 py-3 rounded-xl font-bold transition-colors duration-300 ${
-                    isDarkMode
-                      ? "bg-cyan-600 text-white hover:bg-cyan-700"
-                      : "bg-black text-white hover:bg-zinc-800"
-                  }`}
-                >
-                  Retry
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Courses Grid */}
-          {!loading && !error && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredCourses.length > 0 ? (
-                filteredCourses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
-                ))
-              ) : (
-                <div className="col-span-full text-center py-20">
-                  <p
-                    className={`text-2xl font-semibold ${
-                      isDarkMode ? "text-zinc-400" : "text-zinc-600"
-                    }`}
-                  >
-                    No courses found for this category.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* View All Courses Link */}
-          {!loading && !error && courses.length > 0 && (
-            <div className="flex justify-center mt-12">
-              <Link
-                to="/courses"
-                className={`px-10 py-5 rounded-3xl font-black text-lg uppercase tracking-tighter transition-all duration-300 ease-out hover:scale-105 ${
-                  isDarkMode
-                    ? "bg-cyan-500 text-white hover:bg-cyan-400 shadow-lg shadow-cyan-900/40 hover:shadow-cyan-900/60"
-                    : "bg-black text-white hover:bg-zinc-800 shadow-lg shadow-black/40 hover:shadow-black/60"
-                }`}
-              >
-                View All Courses
-              </Link>
-            </div>
-          )}
         </div>
       </section>
 
