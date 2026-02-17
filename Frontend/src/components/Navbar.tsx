@@ -85,8 +85,8 @@ const Navbar: React.FC = () => {
                   active
                     ? isDarkMode
                       ? "text-white"
-                      : "text-zinc-900"
-                    : "text-zinc-500 hover:text-zinc-400"
+                      : "text-zinc-950"
+                    : "text-zinc-600 hover:text-zinc-900"
                 }`}
               >
                 <span className="relative z-10">{link.name}</span>

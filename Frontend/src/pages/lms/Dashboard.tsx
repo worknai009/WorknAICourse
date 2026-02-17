@@ -66,7 +66,7 @@ const SidebarItem = ({
     className={`lms-sidebar-item group ${
       active
         ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-indigo-900/40"
-        : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50"
+        : "text-slate-600 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
     }`}
   >
     <Icon
@@ -130,7 +130,7 @@ const Dashboard = () => {
         className={`fixed left-0 top-0 bottom-0 w-72 border-r z-[100] transition-all flex flex-col ${
           isDarkMode
             ? "bg-slate-950 border-slate-800/50"
-            : "bg-white border-slate-200"
+            : "bg-slate-50 border-slate-300 shadow-sm"
         }`}
       >
         <div className="p-8 pb-10">
@@ -168,7 +168,7 @@ const Dashboard = () => {
             className={`flex items-center gap-4 px-5 py-3 rounded-xl transition-all w-full group ${
               isDarkMode
                 ? "hover:bg-rose-500/10 text-slate-500 hover:text-rose-500"
-                : "hover:bg-rose-50 text-slate-500 hover:text-rose-600"
+                : "hover:bg-rose-100/50 text-slate-600 hover:text-rose-700"
             }`}
           >
             <LogOut
@@ -191,12 +191,12 @@ const Dashboard = () => {
           className={`h-20 flex items-center justify-between px-8 relative z-50 transition-all ${
             isDarkMode
               ? "bg-slate-950/80 border-b border-slate-800/50 backdrop-blur-xl"
-              : "bg-white/80 border-b border-slate-200 shadow-sm backdrop-blur-xl"
+              : "bg-white/90 border-b border-slate-300 shadow-sm backdrop-blur-md"
           }`}
         >
           <div className="flex-1 max-w-xl">
             <div
-              className={`relative group flex items-center ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}
+              className={`relative group flex items-center ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}
             >
               <Search
                 size={18}
@@ -208,7 +208,7 @@ const Dashboard = () => {
                 className={`w-full h-11 pl-10 pr-4 rounded-xl text-sm border-0 focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${
                   isDarkMode
                     ? "bg-slate-900/50 border border-slate-800"
-                    : "bg-slate-100 border border-slate-200"
+                    : "bg-slate-200/50 border border-slate-300 text-slate-950 placeholder-slate-500"
                 }`}
               />
             </div>
@@ -220,7 +220,7 @@ const Dashboard = () => {
                 className={`p-2.5 rounded-xl border transition-all relative group ${
                   isDarkMode
                     ? "text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white"
-                    : "text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-950 shadow-sm"
+                    : "text-slate-600 border-slate-300 hover:bg-slate-100 hover:text-slate-950 shadow-sm"
                 }`}
               >
                 <Bell size={18} />
@@ -240,13 +240,13 @@ const Dashboard = () => {
             </div>
 
             <div
-              className={`h-8 w-px ${isDarkMode ? "bg-slate-800" : "bg-slate-200"}`}
+              className={`h-8 w-px ${isDarkMode ? "bg-slate-800" : "bg-slate-300"}`}
             />
 
             <div className="flex items-center gap-4">
               <div className="text-right hidden sm:block">
                 <p
-                  className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-slate-900"}`}
+                  className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-slate-950 font-bold"}`}
                 >
                   {user?.name}
                 </p>
@@ -256,7 +256,7 @@ const Dashboard = () => {
                     : "Lead Engineer"}
                 </p>
               </div>
-              <div className="h-10 w-10 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center border border-slate-800 dark:border-slate-100 shadow-lg shadow-indigo-500/10">
+              <div className="h-10 w-10 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center border border-slate-800 dark:border-slate-300 shadow-lg shadow-indigo-500/10">
                 <UserIcon
                   size={20}
                   className={isDarkMode ? "text-white" : "text-slate-950"}
@@ -551,7 +551,7 @@ const Overview = () => {
               ))
             ) : (
               <div
-                className={`py-16 text-center space-y-4 border-2 border-dashed rounded-[2rem] ${isDarkMode ? "border-slate-800" : "border-slate-200"}`}
+                className={`py-16 text-center space-y-4 border-2 border-dashed rounded-[2rem] ${isDarkMode ? "border-slate-800" : "border-slate-300"}`}
               >
                 <Activity
                   size={32}
@@ -770,7 +770,7 @@ const MyCourses = () => {
             My Learning Library
           </h2>
           <p
-            className={`text-sm font-medium ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}
+            className={`text-sm font-medium ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}
           >
             Track your progress and continue your professional journey.
           </p>
@@ -783,7 +783,7 @@ const MyCourses = () => {
               className={`p-3 rounded-xl transition-all border ${
                 isDarkMode
                   ? "bg-slate-900 border-slate-800 text-slate-400 hover:text-rose-500"
-                  : "bg-white border-slate-200 text-slate-400 hover:text-rose-600 hover:bg-rose-50 shadow-sm"
+                  : "bg-white border-slate-300 text-slate-600 hover:text-rose-600 hover:bg-rose-50 shadow-sm"
               }`}
             >
               <Trash2 size={18} />

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -46,8 +46,6 @@
 
       /* Base Styles */
       body {
-        background-color: #000000;
-        color: #ffffff;
         font-family: "Inter", sans-serif;
         scroll-behavior: smooth;
         -webkit-font-smoothing: antialiased;
@@ -68,9 +66,7 @@
     </style>
   </head>
 
-  <body
-    class="bg-black text-white selection:bg-accent-cyan selection:text-black paper-texture"
-  >
+  <body class="selection:bg-accent-cyan selection:text-black paper-texture">
     <!-- React Root -->
     <div id="root"></div>
 
@@ -78,7 +74,7 @@
     <script type="module" src="/src/main.tsx"></script>
 
     <!-- Chatbot Widget -->
-    <script>
+    <!-- <script>
       (function () {
         if (window._worknai_loaded_) return;
         window._worknai_loaded_ = true;
@@ -152,6 +148,6 @@
         document.body.appendChild(button);
         document.body.appendChild(greeting);
       })();
-    </script>
+    </script> -->
   </body>
 </html>

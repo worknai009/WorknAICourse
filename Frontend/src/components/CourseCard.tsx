@@ -53,7 +53,7 @@ const CourseCard: React.FC<Props> = ({ course }) => {
       className={`group flex flex-col h-full rounded-[2.5rem] overflow-hidden border-2 transition-all duration-500 hover:shadow-2xl ${
         isDarkMode
           ? "bg-zinc-900/30 border-zinc-800 hover:border-cyan-500/50 hover:shadow-cyan-950/20"
-          : "bg-white border-zinc-100 hover:border-black hover:shadow-black/10"
+          : "bg-white border-zinc-200 hover:border-black hover:shadow-black/15 shadow-sm"
       }`}
     >
       {/* Course Image Section */}
@@ -127,8 +127,8 @@ const CourseCard: React.FC<Props> = ({ course }) => {
       <div className="px-8 pb-8 pt-4 flex flex-col grow">
         <div className="flex justify-between items-start mb-4">
           <h3
-            className={`text-2xl font-bold font-syne leading-tight tracking-tight group-hover:text-cyan-400 transition-colors ${
-              isDarkMode ? "text-zinc-100" : "text-zinc-900"
+            className={`text-2xl font-bold font-syne leading-tight tracking-tight group-hover:text-cyan-500 transition-colors ${
+              isDarkMode ? "text-zinc-100" : "text-zinc-950"
             }`}
           >
             {course.name}
@@ -138,7 +138,7 @@ const CourseCard: React.FC<Props> = ({ course }) => {
         {/* Description (truncated) */}
         <p
           className={`text-sm mb-6 line-clamp-2 ${
-            isDarkMode ? "text-zinc-400" : "text-zinc-600"
+            isDarkMode ? "text-zinc-400" : "text-zinc-700"
           }`}
         >
           {course.description}
@@ -151,7 +151,7 @@ const CourseCard: React.FC<Props> = ({ course }) => {
             className={`p-5 rounded-2xl border transition-colors ${
               isDarkMode
                 ? "bg-zinc-950/80 border-zinc-800 group-hover:border-cyan-500/20"
-                : "bg-zinc-50 border-zinc-100 group-hover:border-blue-500/30"
+                : "bg-slate-50 border-slate-200 group-hover:border-blue-500/40"
             }`}
           >
             <div className="flex items-end justify-between mb-3">
@@ -162,7 +162,7 @@ const CourseCard: React.FC<Props> = ({ course }) => {
                 <div className="flex items-center gap-2">
                   <span
                     className={`text-3xl font-black ${
-                      isDarkMode ? "text-white" : "text-zinc-900"
+                      isDarkMode ? "text-white" : "text-zinc-950"
                     }`}
                   >
                     ₹{course.discountedPrice.toLocaleString("en-IN")}
@@ -204,7 +204,7 @@ const CourseCard: React.FC<Props> = ({ course }) => {
               </span>
               <span
                 className={`text-xs font-black ${
-                  isDarkMode ? "text-cyan-400" : "text-emerald-500"
+                  isDarkMode ? "text-cyan-400" : "text-emerald-600"
                 }`}
               >
                 Total: ₹{totalPrice.toLocaleString("en-IN")}

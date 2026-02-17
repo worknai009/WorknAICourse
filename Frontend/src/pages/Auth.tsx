@@ -114,7 +114,7 @@ const Auth: React.FC<Props> = ({ type }) => {
         className={`relative z-10 w-full max-w-[1000px] flex flex-col md:flex-row rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden refractive-border liquid-glass border shadow-2xl max-h-[80vh] md:max-h-[75vh] ${
           isDarkMode
             ? "bg-zinc-950/40 border-white/5"
-            : "bg-white/40 border-white/20"
+            : "bg-white/60 border-zinc-300 shadow-zinc-200/50"
         }`}
       >
         {/* Left Side: Branding/Visual */}
@@ -128,7 +128,7 @@ const Auth: React.FC<Props> = ({ type }) => {
                   ? "ELEVATE \nYOUR \nLOGIC."
                   : "JOIN \nTHE \nELITE."}
               </h2>
-              <p className="text-zinc-500 font-bold uppercase tracking-widest text-[9px] max-w-[200px]">
+              <p className="text-zinc-600 font-bold uppercase tracking-widest text-[9px] max-w-[200px]">
                 {type === "signin"
                   ? "Resume your learning track and access workspace."
                   : "Register for verified tracks and mentorship."}
@@ -170,11 +170,11 @@ const Auth: React.FC<Props> = ({ type }) => {
         {/* Right Side: Form */}
         <div className="w-full md:w-7/12 p-6 md:p-10 lg:p-12 flex flex-col justify-center overflow-y-auto">
           <div className="mb-6">
-            <h3 className="text-xl font-black font-syne uppercase tracking-tight italic">
+            <h3 className="text-xl font-black font-syne uppercase tracking-tight italic text-zinc-950 dark:text-white">
               {type === "signin" ? "Student Sign In" : "New Enrollment"}
             </h3>
             <div
-              className={`w-10 h-1 mt-2 rounded-full bg-gradient-to-r ${isDarkMode ? "from-cyan-400 to-blue-500" : "from-blue-600 to-emerald-500"}`}
+              className={`w-10 h-1 mt-2 rounded-full bg-gradient-to-r ${isDarkMode ? "from-cyan-400 to-blue-500" : "from-blue-600 to-emerald-600"}`}
             ></div>
           </div>
           <div className="space-y-4 md:space-y-5">
@@ -196,7 +196,7 @@ const Auth: React.FC<Props> = ({ type }) => {
                     className={`w-full h-12 md:h-14 px-5 rounded-[1rem] border-2 outline-none transition-all font-bold text-xs ${
                       isDarkMode
                         ? "bg-zinc-950/50 border-zinc-800 focus:border-cyan-500/50 text-white placeholder-zinc-800"
-                        : "bg-zinc-50 border-zinc-100 focus:border-black placeholder-zinc-300"
+                        : "bg-zinc-50 border-zinc-200 focus:border-black placeholder-zinc-400 text-zinc-950"
                     }`}
                   />
                 </div>
@@ -214,7 +214,7 @@ const Auth: React.FC<Props> = ({ type }) => {
                   className={`w-full h-12 md:h-14 px-5 rounded-[1rem] border-2 outline-none transition-all font-bold text-xs ${
                     isDarkMode
                       ? "bg-zinc-950/50 border-zinc-800 focus:border-cyan-500/50 text-white placeholder-zinc-800"
-                      : "bg-zinc-50 border-zinc-100 focus:border-black placeholder-zinc-300"
+                      : "bg-zinc-50 border-zinc-200 focus:border-black placeholder-zinc-400 text-zinc-950"
                   }`}
                 />
               </div>
@@ -231,7 +231,7 @@ const Auth: React.FC<Props> = ({ type }) => {
                   className={`w-full h-12 md:h-14 px-5 rounded-[1rem] border-2 outline-none transition-all font-bold text-xs ${
                     isDarkMode
                       ? "bg-zinc-950/50 border-zinc-800 focus:border-cyan-500/50 text-white placeholder-zinc-800"
-                      : "bg-zinc-50 border-zinc-100 focus:border-black placeholder-zinc-300"
+                      : "bg-zinc-50 border-zinc-200 focus:border-black placeholder-zinc-400 text-zinc-950"
                   }`}
                 />
               </div>

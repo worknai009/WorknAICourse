@@ -41,11 +41,11 @@ const BentoGrid: React.FC = () => {
   return (
     <div className="flex flex-col gap-10">
       {/* Featured Pillar: The Founding Vision */}
-      <div className="reveal ml-6 md:ml-12 lg:ml-20 p-12 md:p-16 border rounded-sm flex flex-col justify-between group transition-all duration-500 max-w-2xl bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 shadow-xl dark:shadow-2xl hover:border-black dark:hover:border-accent-cyan">
+      <div className="reveal ml-6 md:ml-12 lg:ml-20 p-12 md:p-16 border rounded-sm flex flex-col justify-between group transition-all duration-500 max-w-2xl bg-white dark:bg-zinc-950 border-zinc-300 dark:border-zinc-800 shadow-xl dark:shadow-2xl hover:border-black dark:hover:border-accent-cyan">
         <div>
-          <h3 className="text-4xl md:text-5xl font-black font-syne leading-[0.85] tracking-tighter uppercase mb-10 text-black dark:text-white">
+          <h3 className="text-4xl md:text-5xl font-black font-syne leading-[0.85] tracking-tighter uppercase mb-10 text-zinc-950 dark:text-white">
             Master <br />
-            <span className="text-rose-500">The</span> <br /> Core.
+            <span className="text-rose-600">The</span> <br /> Core.
           </h3>
 
           {/* Animated Quote Section */}
@@ -59,10 +59,10 @@ const BentoGrid: React.FC = () => {
                     : "opacity-0 translate-y-4 pointer-events-none"
                 }`}
               >
-                <p className="max-w-xl text-lg md:text-xl font-black leading-relaxed text-zinc-800 dark:text-zinc-100 mb-4">
+                <p className="max-w-xl text-lg md:text-xl font-black leading-relaxed text-zinc-900 dark:text-zinc-100 mb-4">
                   "{quote.text}"
                 </p>
-                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 italic">
+                <p className="text-sm font-medium text-zinc-700 dark:text-zinc-400 italic">
                   {quote.detail}
                 </p>
               </div>
@@ -77,7 +77,7 @@ const BentoGrid: React.FC = () => {
                 onClick={() => setQuoteIndex(index)}
                 className={`h-1.5 rounded-full transition-all duration-500 ${
                   index === quoteIndex
-                    ? "w-8 bg-rose-500"
+                    ? "w-8 bg-rose-600"
                     : "w-1.5 bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600"
                 }`}
                 aria-label={`View quote ${index + 1}`}
@@ -89,7 +89,7 @@ const BentoGrid: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Card 2: Immersion */}
-        <div className="reveal p-12 border rounded-sm flex flex-col justify-between group transition-all duration-500 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 shadow-xl dark:shadow-lg hover:border-black dark:hover:border-accent-fuchsia">
+        <div className="reveal p-12 border rounded-sm flex flex-col justify-between group transition-all duration-500 bg-white dark:bg-zinc-950 border-zinc-300 dark:border-zinc-800 shadow-xl dark:shadow-lg hover:border-black dark:hover:border-accent-fuchsia">
           <div className="w-16 h-16 border-2 flex items-center justify-center mb-10 border-accent-fuchsia text-accent-fuchsia group-hover:bg-accent-fuchsia group-hover:text-white transition-all duration-300">
             <svg
               width="36"
@@ -102,11 +102,11 @@ const BentoGrid: React.FC = () => {
               <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
             </svg>
           </div>
-          <h4 className="text-4xl font-black font-syne tracking-tighter leading-none mb-6 text-black dark:text-white">
+          <h4 className="text-4xl font-black font-syne tracking-tighter leading-none mb-6 text-zinc-950 dark:text-white">
             Lets
             <br /> Build.
           </h4>
-          <p className="text-base font-black text-zinc-700 dark:text-zinc-300">
+          <p className="text-base font-black text-zinc-800 dark:text-zinc-300">
             No abstractions allowed. You master the iron, the kernel, and the
             cloud from the root up.
           </p>
